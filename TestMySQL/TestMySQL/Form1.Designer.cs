@@ -34,6 +34,8 @@
             this.btnMigrate = new System.Windows.Forms.Button();
             this.btnPicks = new System.Windows.Forms.Button();
             this.btnMySqlPicks = new System.Windows.Forms.Button();
+            this.btnMiscData = new System.Windows.Forms.Button();
+            this.btnIndex = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOracleUsers)).BeginInit();
             this.SuspendLayout();
@@ -70,7 +72,7 @@
             // 
             this.btnMigrate.Location = new System.Drawing.Point(12, 301);
             this.btnMigrate.Name = "btnMigrate";
-            this.btnMigrate.Size = new System.Drawing.Size(160, 46);
+            this.btnMigrate.Size = new System.Drawing.Size(110, 46);
             this.btnMigrate.TabIndex = 3;
             this.btnMigrate.Text = "Migrate User Data";
             this.btnMigrate.UseVisualStyleBackColor = true;
@@ -78,9 +80,9 @@
             // 
             // btnPicks
             // 
-            this.btnPicks.Location = new System.Drawing.Point(217, 301);
+            this.btnPicks.Location = new System.Drawing.Point(149, 301);
             this.btnPicks.Name = "btnPicks";
-            this.btnPicks.Size = new System.Drawing.Size(160, 46);
+            this.btnPicks.Size = new System.Drawing.Size(110, 46);
             this.btnPicks.TabIndex = 4;
             this.btnPicks.Text = "Migrate Picks Data";
             this.btnPicks.UseVisualStyleBackColor = true;
@@ -96,11 +98,33 @@
             this.btnMySqlPicks.UseVisualStyleBackColor = true;
             this.btnMySqlPicks.Click += new System.EventHandler(this.btnMySqlPicks_Click);
             // 
+            // btnMiscData
+            // 
+            this.btnMiscData.Location = new System.Drawing.Point(280, 301);
+            this.btnMiscData.Name = "btnMiscData";
+            this.btnMiscData.Size = new System.Drawing.Size(110, 46);
+            this.btnMiscData.TabIndex = 6;
+            this.btnMiscData.Text = "Migrate Misc Data";
+            this.btnMiscData.UseVisualStyleBackColor = true;
+            this.btnMiscData.Click += new System.EventHandler(this.btnMiscData_Click);
+            // 
+            // btnIndex
+            // 
+            this.btnIndex.Location = new System.Drawing.Point(407, 301);
+            this.btnIndex.Name = "btnIndex";
+            this.btnIndex.Size = new System.Drawing.Size(110, 46);
+            this.btnIndex.TabIndex = 7;
+            this.btnIndex.Text = "Migrate Index Hist EOD Data";
+            this.btnIndex.UseVisualStyleBackColor = true;
+            this.btnIndex.Click += new System.EventHandler(this.btnIndex_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 580);
+            this.Controls.Add(this.btnIndex);
+            this.Controls.Add(this.btnMiscData);
             this.Controls.Add(this.btnMySqlPicks);
             this.Controls.Add(this.btnPicks);
             this.Controls.Add(this.btnMigrate);
@@ -123,6 +147,8 @@
         private System.Windows.Forms.Button btnMigrate;
         private System.Windows.Forms.Button btnPicks;
         private System.Windows.Forms.Button btnMySqlPicks;
+        private System.Windows.Forms.Button btnMiscData;
+        private System.Windows.Forms.Button btnIndex;
     }
 }
 

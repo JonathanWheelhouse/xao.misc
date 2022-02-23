@@ -127,6 +127,7 @@ namespace TestMySQL
 
         private void btnMigrate_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
             DataTable dtUser = new DataTable();
             string strUsers = "select user_id, windows_logon, display_name, password, last_logon_date, sound_file_name, picture_file_name, start_date, end_date, first_name, admin_flag, avatar_file_name from USERS order by windows_logon";
             OracleCommand cmd = new OracleCommand(strUsers);
@@ -173,6 +174,7 @@ namespace TestMySQL
                 Console.WriteLine(" column4 = " + row[3].ToString());
             }
 
+            Cursor.Current = Cursors.Default;
         }
 
         private string format_to_str(string inStr)
@@ -201,6 +203,7 @@ namespace TestMySQL
 
         private void btnPicks_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
             DataTable dtUser = new DataTable();
             string strUsers = "select pick_id, user_id, windows_logon, display_name, pick, winner_flag, jackpot_flag, jackpot_amount, pick_date from PICKS order by pick_id";
             OracleCommand cmd = new OracleCommand(strUsers);
@@ -242,6 +245,8 @@ namespace TestMySQL
                 Console.Write(" column3 = " + row[3].ToString());
                 Console.WriteLine(" column4 = " + row[8].ToString());  
             }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private bool CheckPickExistsMySql(Int32 user_id, Int32 pick_id)
@@ -320,5 +325,143 @@ namespace TestMySQL
         {
 
         }
+
+        private void btnMiscData_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            DataTable dtUser = new DataTable();
+            string strUsers = "select parameter_name, parameter_value1, parameter_value2, parameter_date, parameter_description from MISC ";
+            OracleCommand cmd = new OracleCommand(strUsers);
+            dtUser = GetOracleData(cmd, XAOConnStr);
+
+            BindingSource bindingSauce = new BindingSource();
+            DataTable table = new DataTable();
+            bindingSauce.DataSource = dtUser;
+            dgvOracleUsers.DataSource = bindingSauce;
+
+            StringBuilder sbSQL = new StringBuilder();
+            MySqlCommand myCmd = new MySqlCommand();
+            string strParamDate = string.Empty;
+
+            Int32 iCnt = 0;
+            foreach (DataRow row in dtUser.Rows)
+            {
+                if (!CheckMiscExistsMySql(row[0].ToString()))
+                {
+                    strParamDate = format_to_str(row[3].ToString());
+                    sbSQL = new StringBuilder();
+                    sbSQL.Append("Insert into XAO_INDEX_GAME.MISC (PARAMETER_NAME, PARAMETER_VALUE1, PARAMETER_VALUE2, PARAMETER_DATE,  ");
+                    sbSQL.Append("  PARAMETER_DESCRIPTION) values ('");
+                    sbSQL.Append(row[0].ToString() + "','" + row[1].ToString() + "','");
+                    sbSQL.Append(row[2].ToString() + "'," + strParamDate + ", '" + row[4].ToString() + "')");
+
+                    InsertMySql(sbSQL.ToString());
+                }
+                iCnt++;
+                if (iCnt % 6 > 4)
+                    Application.DoEvents();
+                Console.Write("iCnt = " + iCnt.ToString() + " column1 = " + row[0].ToString());
+
+                Console.Write(" column2 = " + row[2].ToString());
+                Console.Write(" column3 = " + row[3].ToString());
+            }
+
+            Cursor.Current = Cursors.Default;
+        }
+
+        private bool CheckMiscExistsMySql(string strParamName)
+        {
+            string myConnStr = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ToString();
+            string strUsers = "select parameter_name from MISC where parameter_name = '" + strParamName + "'";
+            MySqlDataAdapter dataAdapter = new MySqlDataAdapter();
+            BindingSource bindingSauce = new BindingSource();
+
+            dataAdapter = new MySqlDataAdapter(strUsers, myConnStr);
+            DataTable table = new DataTable();
+            dataAdapter.Fill(table);
+
+            if (table.Rows.Count > 0)
+                return true;
+            else
+                return false;
+
+        }
+
+        private void btnIndex_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            DataTable dtIndex = new DataTable();
+            string strUsers = "select ASX_CODE, LAST_PRICE, MESSAGE_RECEIPT_TIME, MOVEMENT from INDEX_HISTORY_EOD ";
+            OracleCommand cmd = new OracleCommand(strUsers);
+            dtIndex = GetOracleData(cmd, XAOConnStr);
+
+            BindingSource bindingSauce = new BindingSource();
+            DataTable table = new DataTable();
+            bindingSauce.DataSource = dtIndex;
+            dgvOracleUsers.DataSource = bindingSauce;
+
+            StringBuilder sbSQL = new StringBuilder();
+            MySqlCommand myCmd = new MySqlCommand();
+            string strParamDate = string.Empty;
+
+            Int32 iCnt = 0;
+            foreach (DataRow row in dtIndex.Rows)
+            {
+                string strDate = row[2].ToString();
+                DateTime dtDate = Convert.ToDateTime(strDate);
+
+                if (!CheckIndexExistsMySql( dtDate.ToString("yyyy-MM-dd") ))
+                {
+                    strParamDate = format_to_str(row[2].ToString());
+                    sbSQL = new StringBuilder();
+                    sbSQL.Append("Insert into XAO_INDEX_GAME.INDEX_HISTORY_EOD (ASX_CODE, LAST_PRICE, MESSAGE_RECEIPT_TIME, MOVEMENT  ");
+                    sbSQL.Append(" ) values ('");
+                    sbSQL.Append(row[0].ToString() + "','" + row[1].ToString() + "',");
+                    sbSQL.Append(strParamDate + ", '" + row[3].ToString() + "')");
+
+                    InsertMySql(sbSQL.ToString());
+                }
+                iCnt++;
+                if (iCnt % 6 > 4)
+                    Application.DoEvents();
+                Console.Write("iCnt = " + iCnt.ToString() + " column1 = " + row[0].ToString());
+
+                Console.Write(" column2 = " + row[2].ToString());
+                Console.Write(" column3 = " + row[3].ToString());
+            }
+
+            Cursor.Current = Cursors.Default;
+        }
+
+        private bool CheckIndexExistsMySql(string strDate)
+        {
+            string myConnStr = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ToString();
+
+            try
+            {
+                string strUsers = "select MESSAGE_RECEIPT_TIME from INDEX_HISTORY_EOD where MESSAGE_RECEIPT_TIME = '" + strDate + "'";
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter();
+                BindingSource bindingSauce = new BindingSource();
+
+                dataAdapter = new MySqlDataAdapter(strUsers, myConnStr);
+                DataTable table = new DataTable();
+                dataAdapter.Fill(table);
+
+                if (table.Rows.Count > 0)
+                    return true;
+                else
+                    return false;
+
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine("Error in CheckIndexExistsMySql : " + exp.ToString());
+                return false;
+            }
+
+
+        }
+
     }
 }
+
